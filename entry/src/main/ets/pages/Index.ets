@@ -5,6 +5,7 @@ import { HomePageComponent } from '../view/HomePageComponent';
 import { MessagePageComponent } from '../view/MessagePageComponent';
 import { MinePageComponent } from '../view/MinePageComponent';
 import TabsViewModel from '../viewmodel/TabsViewModel';
+import { display } from '@kit.ArkUI';
 
 @Entry
 @Component
@@ -14,6 +15,12 @@ struct Index {
       TabIndex()
     }
   }
+
+  onPageShow(): void {
+    console.info('onPageShow---屏幕的高度:'+display.getDefaultDisplaySync().height)
+    CommonConstants.SCREEN_HEIGHT=display.getDefaultDisplaySync().height
+  }
+
 }
 
 @Component

@@ -1,4 +1,7 @@
 import MineViewModel from '../viewmodel/MineViewModel';
+import { display } from '@kit.ArkUI';
+import { CommonConstants } from '../constants/CommonConstants';
+
 
 @Component
 export struct MinePageComponent {
@@ -7,13 +10,25 @@ export struct MinePageComponent {
 
   @State tabs:Array<string>= MineViewModel.mineTabs
 
+  @State topHeight:string ='40%'
+  @State private overScrollOffset: number = 0
+  private maxOverScrollOffset: number = 120
+  private lastTouchX = 0
+  private lastTouchY = 0
+  scroller: Scroller = new Scroller()
   build() {
+    Scroll(this.scroller){
     Column(){
       Stack(){
         Image($r("app.media.ic_mine_background"))
-          .height('100%')
           .width('100%')
           .objectFit(ImageFit.Fill)
+          .height(this.overScrollOffset+ 300)
+          .scale({
+            x: ((300  + this.overScrollOffset) / 300) ,
+            centerX: "50%",
+            centerY: "50%"
+          })
         RelativeContainer(){
           Image($r('app.media.head'))
             .width(60)
@@ -50,10 +65,8 @@ export struct MinePageComponent {
         .height('100%')
         .width('100%')
       }
-      .height('40%')
       .width('100%')
-
-
+      .height(this.overScrollOffset + 300)
       Column(){
         Row(){
           Text('99')
@@ -176,9 +189,40 @@ export struct MinePageComponent {
     .height('100%')
     .width('100%')
     .alignItems(HorizontalAlign.Start)
+    .onTouch((event: TouchEvent) => {
+        this.handleOverScroll(event)
+    })
+    }
+    .scrollable(ScrollDirection.Vertical)
+    .width('100%')
+  }
 
 
 
+
+  handleOverScroll(event: TouchEvent) {
+      if (event.type == TouchType.Down) {
+        this.lastTouchX = event.touches[0].x
+        this.lastTouchY = event.touches[0].y
+      } else if (event.type == TouchType.Move) {
+        const curTouchX = event.touches[0].x
+        const curTouchY = event.touches[0].y
+        const dx = curTouchX - this.lastTouchX
+        const dy = curTouchY - this.lastTouchY
+        if (Math.abs(dy) > Math.abs(dx)) {
+          if (dy > 0) { // 向下滑动
+            this.overScrollOffset = Math.min(this.overScrollOffset + dy, this.maxOverScrollOffset)
+          }
+        }
+        this.lastTouchX = curTouchX
+        this.lastTouchY = curTouchY
+      } else if (event.type == TouchType.Up || event.type == TouchType.Cancel) {
+        animateTo({
+          duration: 200
+        }, () => {
+          this.overScrollOffset = 0
+        })
+      }
 
   }
 }

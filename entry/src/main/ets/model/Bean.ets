@@ -1,8 +1,10 @@
+@Observed
 export class  HomeItem{
   praiseCount:number=0
-  commentCount:number=0;
+  commentCount:number=0
   collectCount:number=0
   shareCount:number=0
+  isPlay:boolean=false
   video:Resource=$rawfile('01video.mp4')
   previewUris:Resource =$r('app.media.01videopro')
 }

@@ -6,19 +6,40 @@ import HomeViewModel from '../viewmodel/HomeViewModel';
 export  struct HomePageComponent {
   @State nick:string='';
   @State homeItems:Array<HomeItem>=HomeViewModel.getHomeItems()
+  private  currentIndex:number=0
+  private listScroll:ListScroller=new ListScroller()
+  private lastIndex:number=0
   build() {
-  List(){
-     ForEach(this.homeItems,(item:HomeItem)=>{
+  List({scroller:this.listScroll}){
+     ForEach(this.homeItems,(item:HomeItem,index:number)=>{
          HomeViewItem({homeItem:item})
      })
   }
+
+  /**
+   * 有子组件划入或划出List显示区域时触发
+   * start 开始位置
+   * end 偏向上一页或者下一页
+   */
+  .onScrollIndex((start:number,center:number,end:number)=>{
+    this.currentIndex=end
+  })
+  .onTouch((event: TouchEvent) =>{
+    if(event.type == TouchType.Up || event.type == TouchType.Cancel){
+      this.homeItems[this.lastIndex].isPlay=false
+      this.homeItems[this.currentIndex].isPlay=true
+      this.listScroll.scrollToIndex(this.currentIndex,true)
+       this.lastIndex=this.currentIndex
+    }
+    })
   .height(CommonConstants.HOME_CONTENT_HEIGHT)
   .width(CommonConstants.HOME_CONTENT_WIDTH)
   }
+
 }
 @Component
 struct HomeViewItem{
-  @Prop homeItem:HomeItem;
+  @Prop @Watch('isPlay') homeItem:HomeItem;
   controller:VideoController=new VideoController();
    BottomEnd:Record<string,Record<string,string|VerticalAlign|HorizontalAlign>> = {
      'bottom': { 'anchor': '__container__', 'align': VerticalAlign.Bottom },
@@ -28,6 +49,15 @@ struct HomeViewItem{
     'bottom': { 'anchor': '__container__', 'align': VerticalAlign.Bottom },
     'left': { 'anchor': '__container__', 'align': HorizontalAlign.Start }
   }
+
+  isPlay(){
+    if(this.homeItem.isPlay){
+      this.controller.start()
+    }else{
+      this.controller.stop()
+    }
+  }
+
   build(){
     RelativeContainer(
 
@@ -41,9 +71,8 @@ struct HomeViewItem{
         }
       )
         .loop(true)
-        //自动播放
-        .autoPlay(true)
           //视频适配模式
+        .autoPlay(this.homeItem.isPlay)
         .objectFit(ImageFit.Contain)
         .height(CommonConstants.HOME_CONTENT_HEIGHT)
         .width(CommonConstants.HOME_CONTENT_WIDTH)

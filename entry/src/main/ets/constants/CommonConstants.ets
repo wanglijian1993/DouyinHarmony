@@ -22,6 +22,10 @@ export class CommonConstants {
   static readonly BREAKPOINT_SYSTEM_NAME: string = 'mainBreakpoint';
 
 
+  /**
+   * 屏幕高度
+   */
+  static SCREEN_HEIGHT:number=0;
 
   /**
    * Breakpoint sm.

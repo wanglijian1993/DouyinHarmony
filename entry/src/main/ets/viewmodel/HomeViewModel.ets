@@ -6,6 +6,11 @@ export class HomeViewModel{
      let homeItems:Array<HomeItem>=[]
      for(let i=0;i<CommonConstants.HOME_PAGE_SIZE;i++){
        let homeItem= new HomeItem()
+       if(i==0){
+         homeItem.isPlay=true
+       }else{
+         homeItem.isPlay=false
+       }
        homeItem.praiseCount=99
        homeItem.commentCount=99
        homeItem.shareCount=99
