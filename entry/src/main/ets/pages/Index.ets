@@ -1,11 +1,11 @@
 import { CommonConstants } from '../constants/CommonConstants';
 import { TabBarItem } from '../model/Bean';
-import { FriendsPageComponent } from '../view/FriendsPageComponent';
 import { HomePageComponent } from '../view/HomePageComponent';
 import { MessagePageComponent } from '../view/MessagePageComponent';
 import { MinePageComponent } from '../view/MinePageComponent';
 import TabsViewModel from '../viewmodel/TabsViewModel';
 import { display } from '@kit.ArkUI';
+import { ImagesPageComponent } from '../view/ImagesPageComponent';
 
 @Entry
 @Component
@@ -17,7 +17,6 @@ struct Index {
   }
 
   onPageShow(): void {
-    console.info('onPageShow---屏幕的高度:'+display.getDefaultDisplaySync().height)
     CommonConstants.SCREEN_HEIGHT=display.getDefaultDisplaySync().height
   }
 
@@ -27,6 +26,7 @@ struct Index {
 export struct TabIndex {
   @State currentIndex: number = 0;
   @State tabs: Array<TabBarItem> = TabsViewModel.getTabData();
+  @State homePage:boolean=true
 
 
   @Builder TabBarBuilder(tabBar: TabBarItem, index?: number) {
@@ -51,9 +51,9 @@ export struct TabIndex {
         ForEach(this.tabs, (item: TabBarItem, index?: number) => {
           TabContent()   {
             if(index==0){
-              HomePageComponent({nick:item.name})
+              HomePageComponent({nick:item.name,homePage:this.homePage})
             }else if(index==1){
-              FriendsPageComponent({nick:item.name})
+              ImagesPageComponent({nick:item.name})
             }else if(index==2){
               MessagePageComponent({nick:item.name})
             }else if(index==3){
@@ -69,7 +69,13 @@ export struct TabIndex {
       .barWidth(CommonConstants.TAB_SM_BAR_WIDTH)
       .barHeight(CommonConstants.TAB_SM_BAR_HEIGHT)
       .onChange((index: number) => {
+          if(index==0){
+            this.homePage=true
+          }else{
+            this.homePage=false
+          }
         this.currentIndex = index;
+
       })
     }
     .backgroundColor($r('app.color.responsive_layout_background'))

@@ -10,9 +10,9 @@ export struct MinePageComponent {
 
   @State tabs:Array<string>= MineViewModel.mineTabs
 
-  @State topHeight:string ='40%'
   @State private overScrollOffset: number = 0
   private maxOverScrollOffset: number = 120
+  private defautBgHeig:number=200
   private lastTouchX = 0
   private lastTouchY = 0
   scroller: Scroller = new Scroller()
@@ -23,9 +23,9 @@ export struct MinePageComponent {
         Image($r("app.media.ic_mine_background"))
           .width('100%')
           .objectFit(ImageFit.Fill)
-          .height(this.overScrollOffset+ 300)
+          .height(this.overScrollOffset+ this.defautBgHeig)
           .scale({
-            x: ((300  + this.overScrollOffset) / 300) ,
+            x: ((this.defautBgHeig  + this.overScrollOffset) / this.defautBgHeig) ,
             centerX: "50%",
             centerY: "50%"
           })
@@ -66,7 +66,7 @@ export struct MinePageComponent {
         .width('100%')
       }
       .width('100%')
-      .height(this.overScrollOffset + 300)
+      .height(this.overScrollOffset + this.defautBgHeig)
       Column(){
         Row(){
           Text('99')
@@ -129,7 +129,7 @@ export struct MinePageComponent {
             .margin({left:2})
         }
         .height('100%')
-        .backgroundColor($r('app.color.color_mine_age_bg'))
+        .backgroundColor($r('app.color.responsive_layout_background'))
         .padding({
           left:3,top:2,right:3,bottom:2
         })
@@ -137,7 +137,7 @@ export struct MinePageComponent {
           .fontSize(12)
           .fontColor($r('app.color.grid_title_color'))
           .margin({left:2}).margin({left:5})
-          .backgroundColor($r('app.color.color_mine_age_bg'))
+          .backgroundColor($r('app.color.responsive_layout_background'))
           .height('100%')
 
       }
@@ -161,7 +161,7 @@ export struct MinePageComponent {
           .borderRadius(5)
 
       }
-      .height(80)
+      .height(40  )
       .width('100%')
       .padding({left:20,right:20})
       .margin({top:10})
@@ -181,10 +181,7 @@ export struct MinePageComponent {
 
 
       }
-      .height(200)
-
-
-
+      .height('100%')
     }
     .height('100%')
     .width('100%')

@@ -23,3 +23,16 @@ export class MsgItem{
   msg:string=''
 
 }
+
+@Observed
+export class TabItem {
+  index: number
+  name: string
+  icon?: string | Resource
+
+  constructor(index: number, name: string, icon?: string | Resource) {
+    this.index = index
+    this.name = name
+    this.icon = icon
+  }
+}

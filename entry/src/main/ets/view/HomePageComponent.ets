@@ -6,9 +6,18 @@ import HomeViewModel from '../viewmodel/HomeViewModel';
 export  struct HomePageComponent {
   @State nick:string='';
   @State homeItems:Array<HomeItem>=HomeViewModel.getHomeItems()
+  @Prop @Watch('isCurrentPage') homePage:boolean=true
   private  currentIndex:number=0
   private listScroll:ListScroller=new ListScroller()
   private lastIndex:number=0
+  isCurrentPage(){
+   if(this.homePage){
+     this.homeItems[this.currentIndex].isPlay=true
+   }else{
+     this.homeItems[this.currentIndex].isPlay=false
+   }
+  }
+
   build() {
   List({scroller:this.listScroll}){
      ForEach(this.homeItems,(item:HomeItem,index:number)=>{
@@ -54,7 +63,7 @@ struct HomeViewItem{
     if(this.homeItem.isPlay){
       this.controller.start()
     }else{
-      this.controller.stop()
+      this.controller.pause()
     }
   }
 
