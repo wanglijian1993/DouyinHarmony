@@ -6,7 +6,8 @@ export struct MessagePageComponent {
 
   @State nick:string='';
   @State msgs:Array<MsgItem>=MsgViewModel.getMsgs()
-
+  @State offsetX: number = 0
+  @State positionX: number = 0
   build() {
     Column(){
       Row(){
@@ -33,6 +34,15 @@ export struct MessagePageComponent {
           }
         )
       }
+      .translate({ x: this.offsetX })
+      .gesture(
+        PanGesture().onActionUpdate( (event: GestureEvent) => {
+          this.offsetX = this.positionX + event.offsetX
+        })
+          .onActionEnd( (event: GestureEvent) => {
+            this.positionX = this.offsetX
+          })
+      )
       .margin({top:10})
       List(){
         ForEach(
@@ -88,7 +98,7 @@ struct MsgView{
         })
         .margin({left:10})
         .id('nick')
-      Text('消息')
+      Text(this.msg.msg)
         .alignRules({
           left: {anchor:"img",align:HorizontalAlign.End},
           bottom:{anchor:"img",align:VerticalAlign.Bottom}
