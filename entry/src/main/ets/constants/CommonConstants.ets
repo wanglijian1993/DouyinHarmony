@@ -189,7 +189,7 @@ export class CommonConstants {
    */
   static readonly COLUMN_TEXT_FONT_WEIGHT: number = 400;
 
-  static readonly HOME_ICON_HEIGHT:number=40;
-  static readonly HOME_ICON_WIDTH:number=40;
+  static readonly HOME_ICON_HEIGHT:number=30;
+  static readonly HOME_ICON_WIDTH:number=30;
 
 }

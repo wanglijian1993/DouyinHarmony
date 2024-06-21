@@ -1,6 +1,7 @@
 import { CommonConstants } from '../constants/CommonConstants';
 import { HomeItem } from '../model/Bean';
 import HomeViewModel from '../viewmodel/HomeViewModel';
+import { promptAction } from '@kit.ArkUI';
 
 @Component
 export  struct HomePageComponent {
@@ -10,6 +11,7 @@ export  struct HomePageComponent {
   private  currentIndex:number=0
   private listScroll:ListScroller=new ListScroller()
   private lastIndex:number=0
+
   isCurrentPage(){
    if(this.homePage){
      this.homeItems[this.currentIndex].isPlay=true
@@ -49,6 +51,14 @@ export  struct HomePageComponent {
 @Component
 struct HomeViewItem{
   @Prop @Watch('isPlay') homeItem:HomeItem;
+  @State isPrise:boolean=false
+  @State isCollect:boolean=false
+  dialogController: CustomDialogController | null = new CustomDialogController({
+    builder: ShareDialog(),
+    autoCancel: true,
+    alignment: DialogAlignment.Bottom,
+     offset:{ dx: 0, dy: -25 }
+  })
   controller:VideoController=new VideoController();
    BottomEnd:Record<string,Record<string,string|VerticalAlign|HorizontalAlign>> = {
      'bottom': { 'anchor': '__container__', 'align': VerticalAlign.Bottom },
@@ -57,6 +67,9 @@ struct HomeViewItem{
   BottomLeft:Record<string,Record<string,string|VerticalAlign|HorizontalAlign>> = {
     'bottom': { 'anchor': '__container__', 'align': VerticalAlign.Bottom },
     'left': { 'anchor': '__container__', 'align': HorizontalAlign.Start }
+  }
+  aboutToDisappear() {
+    this.dialogController = null // 将dialogController置空
   }
 
   isPlay(){
@@ -67,16 +80,15 @@ struct HomeViewItem{
     }
   }
 
+
   build(){
     RelativeContainer(
-
     ){
       Video(
         {
           src:$rawfile('01video.mp4'),
           previewUri: $r('app.media.01videopro'),
           controller:this.controller,
-
         }
       )
         .loop(true)
@@ -87,15 +99,13 @@ struct HomeViewItem{
         .width(CommonConstants.HOME_CONTENT_WIDTH)
 
       Column({space:8}){
-
         Image($r('app.media.head'))
           .width(CommonConstants.HOME_ICON_WIDTH)
           .height(CommonConstants.HOME_ICON_HEIGHT)
-          .clip(new Circle({width:40,height:40}))
-
+          .clip(new Circle({width:CommonConstants.HOME_ICON_WIDTH,height:CommonConstants.HOME_ICON_HEIGHT}))
         Column(){
           Image(
-            $r('app.media.ic_praise')
+            this.isPrise?$r('app.media.ic_praise_red') :$r('app.media.ic_praise')
           )
           .width(CommonConstants.HOME_ICON_WIDTH)
           .height(CommonConstants.HOME_ICON_HEIGHT)
@@ -105,6 +115,14 @@ struct HomeViewItem{
             .fontColor($r('app.color.color_white'))
             .fontSize(12)
         }
+        .onClick((event: ClickEvent)=>{
+          this.isPrise=!this.isPrise
+          if(this.isPrise){
+            this.homeItem.praiseCount+=1
+          }else{
+            this.homeItem.praiseCount-=1
+          }
+        })
         Column(){
           Image(
             $r('app.media.ic_commit')
@@ -117,9 +135,12 @@ struct HomeViewItem{
             .fontColor($r('app.color.color_white'))
             .fontSize(12)
         }
+        .onClick((event:ClickEvent)=>{
+          promptAction.showToast({message:'评论',duration:2000})
+        })
         Column(){
           Image(
-            $r('app.media.ic_collect')
+            this.isCollect?$r('app.media.ic_collect_red') :$r('app.media.ic_collect_white')
           )
             .width(CommonConstants.HOME_ICON_WIDTH)
             .height(CommonConstants.HOME_ICON_HEIGHT)
@@ -129,6 +150,14 @@ struct HomeViewItem{
             .fontColor($r('app.color.color_white'))
             .fontSize(12)
         }
+        .onClick((event:ClickEvent)=>{
+         this.isCollect=!this.isCollect
+          if(this.isCollect){
+            this.homeItem.collectCount+=1
+          }else{
+            this.homeItem.collectCount-=1
+          }
+        })
         Column(){
           Image(
             $r('app.media.ic_share')
@@ -141,6 +170,9 @@ struct HomeViewItem{
             .fontColor($r('app.color.color_white'))
             .fontSize(12)
         }
+        .onClick((event:ClickEvent)=>{
+          this.dialogController?.open()
+        })
       }
       .alignRules(this.BottomEnd)
       .id("column1")
@@ -162,5 +194,39 @@ struct HomeViewItem{
     }
     .height(CommonConstants.HOME_CONTENT_HEIGHT)
     .width(CommonConstants.HOME_CONTENT_WIDTH)
+  }
+
+
+}
+
+@CustomDialog
+struct ShareDialog{
+
+  controllerTwo?: CustomDialogController
+
+  onCancel() {
+    console.info('Callback when the first button is clicked')
+  }
+
+  onAccept() {
+    console.info('Callback when the second button is clicked')
+  }
+
+  exitApp() {
+    console.info('Click the callback in the blank area')
+  }
+  build() {
+
+    Column({space:10}){
+
+      Text('分享')
+        .fontSize(20).margin({ top: 10, bottom: 10 })
+
+      Image($r('app.media.ic_wechat'))
+        .height(40)
+        .width(40)
+      Text('WeChat')
+        .margin({top:3,bottom:3})
+    }
   }
 }

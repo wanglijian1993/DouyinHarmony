@@ -175,7 +175,6 @@ export struct MinePageComponent {
             Text(item).fontSize(16).fontColor($r('app.color.grid_title_color'))
               .align(Alignment.TopStart)
           }
-          .backgroundColor($r('app.color.tab_text_active'))
           .tabBar(item)
         })
 
